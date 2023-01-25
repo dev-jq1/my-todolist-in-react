@@ -85,8 +85,9 @@ const Modal = () => {
             <ModalView onClick={(event) => { event.stopPropagation() } }>
               {selectedDay.toLocaleString("ko-kr")}
               <div className='form-container'>
-                TITLE <input type='text' value={title} onChange={onTitleChangeHandler}/>
-                {title}
+                <label>TITLE</label>
+                <input type='text' value={title} onChange={onTitleChangeHandler}/>
+                <label>CONTENT</label>
               </div>
               <div className='button-container'>
                 <button onClick={openModalHandler}>취소</button>
