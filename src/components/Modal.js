@@ -83,6 +83,7 @@ const Modal = () => {
         {isOpen? (
           <ModalBackdrop onClick={openModalHandler}>
             <ModalView onClick={(event) => { event.stopPropagation() } }>
+              {selectedDay.toLocaleString("ko-kr")}
               <div className='form-container'>
                 TITLE <input type='text' value={title} onChange={onTitleChangeHandler}/>
                 {title}
@@ -91,7 +92,6 @@ const Modal = () => {
                 <button onClick={openModalHandler}>취소</button>
                 <button>확인</button>
               </div>
-              {selectedDay.toLocaleString("ko-kr")}
             </ModalView>
           </ModalBackdrop>
         ) : null}
