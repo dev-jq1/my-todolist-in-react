@@ -38,28 +38,73 @@ export const ModalBtn = styled.button`
   cursor: grab;
 `;
 
-export const ModalView = styled.div.attrs((props) => ({
-  // attrs 메소드를 이용해서 아래와 같이 div 엘리먼트에 속성을 추가할 수 있습니다.
-  role: 'dialog',
-}))`
+
+export const ModalView = styled.div`
   // TODO : Modal창 CSS를 구현합니다.
-  background-color: white;
-  width: 90%;
-  height: 60%;
-  border-radius: 20px;
   display: flex;
-  /* justify-content: center;
-  align-items: center; */
   flex-direction: column;
-  >div>button {
-    background-color: transparent;
-    border: none;
-    color: black;
-    font-size: 1.2rem;
+  background-color: white;
+  width: 80%;
+  height: auto;
+  border-radius: 20px;
+  justify-content: space-between;
+  >div.form-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 0 20px 0 20px;
+    >input {
+      border: solid 1px darkgrey;
+    }
+    >textarea {
+      resize: none;
+      height: 160px;
+      overflow: hidden;
+      border: solid 1px darkgrey;
+    }
+    >label {
+      text-align: left;
+      padding-top: 10px;
+    }
   }
+  >span.current-date {
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    padding: 20px;
+    font-size: 20px;
+    font-weight: bold;
+    background-color: darkslategray;
+    color: white;
+  }
+  >div.button-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 20px;
+    >button {
+      background-color: darkslategray;
+      border: none;
+      color: white;
+      font-size: 20px;
+      font-weight: bold;
+      height: 66px;
+      width: 49.9%;
+      /* margin-top: 20px; */
+      &.btn-cancel {
+        border-bottom-left-radius: 20px;
+        /* margin-right: 0.5px; */
+      }
+      &.btn-confirm {
+        border-bottom-right-radius: 20px;
+        /* margin-left: 0.5px; */
+      }
+    }
+  }
+  
   `;
 
 const Modal = () => {
+  const date = ["일", "월", "화", "수", "목", "금", "토"]; 
   const [isOpen, setIsOpen] = useState(false);
   const [title, setTitle] = useState("");
   const selectedDay = useSelector(state => state.selectedDay);
@@ -83,15 +128,18 @@ const Modal = () => {
         {isOpen? (
           <ModalBackdrop onClick={openModalHandler}>
             <ModalView onClick={(event) => { event.stopPropagation() } }>
-              {selectedDay.toLocaleString("ko-kr")}
+              <span className='current-date'>
+                {`${selectedDay.getFullYear()}년 ${selectedDay.getMonth()+1}월 ${selectedDay.getDate()}일 ${date[selectedDay.getDay()]}요일`}
+              </span>
               <div className='form-container'>
                 <label>TITLE</label>
                 <input type='text' value={title} onChange={onTitleChangeHandler}/>
                 <label>CONTENT</label>
+                <textarea></textarea>
               </div>
               <div className='button-container'>
-                <button onClick={openModalHandler}>취소</button>
-                <button>확인</button>
+                <button className='btn-cancel' onClick={openModalHandler}>취소</button>
+                <button className='btn-confirm'>확인</button>
               </div>
             </ModalView>
           </ModalBackdrop>
