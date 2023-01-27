@@ -10,6 +10,16 @@ const selectedDay = createSlice({
         }
     } 
 })
+
+const todoList = createSlice({
+    name: "todoList",
+    initialState: {},
+    reducers: {
+        setTodoList(state, list) {
+            return {...state}
+        }
+    }
+})
 export const { setSelectedDay } = selectedDay.actions;
 
 export default configureStore({
