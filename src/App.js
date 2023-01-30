@@ -3,6 +3,7 @@ import Topbar from "./Topbar";
 import Calendar from "./components/Calendar";
 import styled from "styled-components"
 import Modal from "./components/Modal";
+import Schedules from "./components/Schedules";
 
 
 
@@ -17,6 +18,7 @@ function App() {
                     <Calendar></Calendar>
                     <Modal/>
                     {/* {selectedDay.payload} */}
+                    <Schedules/>
                 </div>
             </div>
         </div>
