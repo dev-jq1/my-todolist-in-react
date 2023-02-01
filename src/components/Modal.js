@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
+import { setTodoList } from '../store/store';
 
 
 export const ModalContainer = styled.div`
@@ -30,6 +31,7 @@ export const ModalBackdrop = styled.div`
 export const ModalBtn = styled.button`
   width: 90%;
   margin-top: 10px;
+  margin-bottom: 5px;
   border: none;
   background-color: black;
   color: white;
@@ -37,6 +39,8 @@ export const ModalBtn = styled.button`
   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
   cursor: grab;
 `;
+
+
 
 
 export const ModalView = styled.div`
@@ -106,18 +110,74 @@ export const ModalView = styled.div`
 const Modal = () => {
   const date = ["일", "월", "화", "수", "목", "금", "토"]; 
   const [isOpen, setIsOpen] = useState(false);
-  const [title, setTitle] = useState("");
-  const selectedDay = useSelector(state => state.selectedDay);
+  const [isAdded, setIsAdded] = useState(false);
 
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [todoData, setTodoData] = useState("");
+
+  const selectedDay = useSelector(state => state.selectedDay);
+  const formatDate = `${selectedDay.getFullYear()}-${selectedDay.getMonth()+1}-${selectedDay.getDate()}`;
+  
+  const todoList = useSelector(state => state.todoList);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    fetch(`http://localhost:3001/todolist`, {
+      method: "GET"
+    }).then((res) => {
+      return res.json()
+    }).then((data) => {
+      setTodoData(data);
+      dispatch(setTodoList(data));
+      setIsAdded(false);
+    });
+  },[selectedDay, isAdded]);
 
   const openModalHandler = () => {
     // TODO : isOpen의 상태를 변경하는 메소드를 구현합니다.
     setIsOpen(!isOpen)
-
+    setTitle("");
+    setContent("");
   };
 
   const onTitleChangeHandler = (e) => {
     setTitle(e.target.value);
+  }
+
+  const onContentChangeHandler = (e) => {
+    setContent(e.target.value);
+  }
+
+  const onConfirmHandler = () => {
+    // console.log(todoData);
+    const newDay = formatDate;
+    // console.log(todoData[newDay][todoData[newDay].length-1].id)
+    const newData = {
+        // id: 1,
+        id: todoData[todoData.length-1].id + 1,
+        date: newDay,
+        title: title, 
+        content: content
+      }
+    // dispatch(addDate(newDay));
+    // dispatch(addTodoList(newData));
+
+    // console.log(todoList)
+    fetch(`http://localhost:3001/todolist`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newData),
+    }).then(() => {
+      setIsOpen(!isOpen)
+      setIsAdded(true);
+      // navigate("/");
+      
+      // window.location.reload();
+    });
   }
 
   return (
@@ -135,11 +195,11 @@ const Modal = () => {
                 <label>TITLE</label>
                 <input type='text' value={title} onChange={onTitleChangeHandler}/>
                 <label>CONTENT</label>
-                <textarea></textarea>
+                <textarea value={content} onChange={onContentChangeHandler}></textarea>
               </div>
               <div className='button-container'>
                 <button className='btn-cancel' onClick={openModalHandler}>취소</button>
-                <button className='btn-confirm'>확인</button>
+                <button className='btn-confirm' onClick={onConfirmHandler}>확인</button>
               </div>
             </ModalView>
           </ModalBackdrop>

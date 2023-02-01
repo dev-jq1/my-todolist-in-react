@@ -62,7 +62,7 @@ i {
 }
 
 .col.selected {
-    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px, rgb(51, 51, 51) 0px 0px 0px 3px inset;
+    box-shadow: rgba(131, 54, 54, 0.16) 0px 1px 4px, rgb(165, 218, 229) 0px 0px 0px 3px inset;
 }
 
 .col.cell.today {
