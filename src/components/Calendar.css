@@ -1,5 +1,8 @@
+
 .content-container {
-    width: 100%;
+    width: 50%;
+    height: 80%;
+    background-color: white;
 }
 
 .content-main {
@@ -32,7 +35,10 @@ i {
     border: none;
 }
 .col.col-end {
+    display: flex;
     border: none;
+    /* width: 15%; */
+
 }
 
 .col.cell {
@@ -62,11 +68,12 @@ i {
 }
 
 .col.selected {
-    box-shadow: rgba(131, 54, 54, 0.16) 0px 1px 4px, rgb(165, 218, 229) 0px 0px 0px 3px inset;
+    box-shadow: rgba(131, 54, 54, 0.16) 0px 1px 4px, rgba(140, 197, 255, 0.849) 0px 0px 0px 3px inset
 }
 
 .col.cell.today {
-    background-color: rgb(239, 239, 238);
+    background-color: rgb(194, 242, 255);
+    color: white;
 }
 
 .col.cell.other {
@@ -87,4 +94,17 @@ i {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+}
+
+i.fa-arrow-left {
+    width: 100%;
+    padding: 0px;
+    padding-right: 2px;
+    padding-left: 5px;
+}
+i.fa-arrow-right {
+    width: 100%;
+    padding: 0px;
+    padding-right: 5px;
+    padding-left: 2px;
 }
