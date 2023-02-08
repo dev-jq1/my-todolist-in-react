@@ -2,7 +2,7 @@ import "../App.css";
 import Topbar from "../Topbar";
 import Calendar from "../components/Calendar";
 import Modal from "../components/Modal";
-import Schedules from "../components/Schedules";
+import Todos from "../components/Todos";
 
 function Home({isPending}) {
     return (
@@ -15,7 +15,7 @@ function Home({isPending}) {
                 <div className="content-main">
                     <Calendar></Calendar>
                     <Modal />
-                    {isPending || <Schedules />}
+                    {isPending || <Todos />}
                 </div>
             </div>
         </>

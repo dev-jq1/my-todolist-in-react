@@ -2,7 +2,7 @@ import "./App.css";
 import Topbar from "./Topbar";
 import Calendar from "./components/Calendar";
 import Modal from "./components/Modal";
-import Schedules from "./components/Schedules";
+import Schedules from "./components/Todo";
 
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";

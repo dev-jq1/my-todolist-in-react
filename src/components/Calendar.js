@@ -38,6 +38,10 @@ export const TodayBtn = styled.button`
         opacity 15ms linear 30ms, transform 270ms cubic-bezier(0, 0, 0.2, 1) 0ms;
     width: auto;
     transform: translate(-50%, 0%);
+    :hover {
+        background-color: gold;
+        color: white;
+    }
 `;
 
 const RenderHeader = ({
