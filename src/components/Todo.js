@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { setTodoList } from "../store/store";
+import { setIsPending, setTodoList } from "../store/store";
 import styled from "styled-components";
-
+import axios from "axios";
 
 export const List = styled.div`
     // TODO : Modal을 구현하는데 전체적으로 필요한 CSS를 구현합니다.
@@ -50,7 +50,7 @@ export const IconContainer = styled.div`
 
 export const InputTitle = styled.input`
     display: none;
-`
+`;
 export const TextareaContent = styled.textarea`
     resize: none;
     display: none;
@@ -70,7 +70,7 @@ export const TextareaContent = styled.textarea`
         border-radius: 10px;
         box-shadow: inset 0px 0px 5px white;
     }
-`
+`;
 
 export const ModifyButtonContainer = styled.div`
     margin-top: 5px;
@@ -83,10 +83,9 @@ export const ModifyButtonContainer = styled.div`
         border: none;
         border-radius: 5pt;
     }
-`
+`;
 
 const Todo = ({ todo }) => {
-    // const [isPending, setIsPending] = useState(true);
     const titleEl = useRef(null);
     const inputEl = useRef(null);
     const contentEl = useRef(null);
@@ -96,90 +95,69 @@ const Todo = ({ todo }) => {
     const [modifiedTitle, setModifiedTitle] = useState(todo.title);
     const [modifiedContent, setModifiedContent] = useState(todo.content);
 
-    // const dayList = todoList.filter((list) => list.date === formatDate);
-    // console.log(dayList);
-
     const dispatch = useDispatch();
-
-    useEffect(() => {
-        fetch(`http://localhost:3001/todolist`, {
-            method: "GET",
-        })
-            .then((res) => {
-                return res.json();
-            })
-            .then((data) => {
-                dispatch(setTodoList(data));
-            });
-    }, []);
-
+    
     const onDeleteHandler = (id) => {
-        fetch(`http://localhost:3001/todolist/${id}`, {
-            method: "DELETE",
-        }).then(() => {
-            fetch(`http://localhost:3001/todolist`, {
-                method: "GET",
+        axios.delete(`http://localhost:3001/todolist/${id}`)
+        .then(() =>{
+            axios.get(`http://localhost:3001/todolist`)
+            .then((res) => {
+                dispatch(setTodoList(res.data));
             })
-                .then((res) => {
-                    return res.json();
-                })
-                .then((data) => {
-                    dispatch(setTodoList(data));
-                    // setIsPending(false);
-                });
-        });
+        })
     };
 
     const onModifyHandler = (e) => {
-        // e.target.parentElement.parentElement.style.visibility = 'hidden'
         setIsModifyClicked(true);
         titleEl.current.style.display = "none";
         contentEl.current.style.display = "none";
-        inputEl.current.style.display = "block"
-        textareaEl.current.style.display = "block"
-        textareaEl.current.rows = todo.content.match(/\n/g).length+1;
+        inputEl.current.style.display = "block";
+        textareaEl.current.style.display = "block";
+        textareaEl.current.rows = 5;
     };
 
     const onChangeModifyTitle = (e) => {
         setModifiedTitle(e.target.value);
-    }
+    };
     const onChangeModifyContent = (e) => {
         setModifiedContent(e.target.value);
-    }
+    };
 
-    const onModifyCancelHandler = () => {
+    const onEditMode = () => {
         setIsModifyClicked(false);
         titleEl.current.style.display = "flex";
         contentEl.current.style.display = "block";
-        inputEl.current.style.display = "none"
-        textareaEl.current.style.display = "none"
+        inputEl.current.style.display = "none";
+        textareaEl.current.style.display = "none";
     }
+
+    const onModifyCancelHandler = () => {
+        onEditMode();
+        setModifiedTitle(todo.title);
+        setModifiedContent(todo.content);
+    };
 
     const onModifyConfirmHandler = (id) => {
         const modifiedData = {
             title: modifiedTitle,
             content: modifiedContent,
         };
-        fetch(`http://localhost:3001/todolist/${id}`, {
-            method: "PATCH",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(modifiedData),
-        }).then(() => {
-            fetch(`http://localhost:3001/todolist`, {
-                method: "GET",
+
+        axios.patch(`http://localhost:3001/todolist/${id}`, modifiedData)
+        .then(() => {
+            axios.get(`http://localhost:3001/todolist`)
+            .then((res) => {
+                dispatch(setTodoList(res.data));
             })
-                .then((res) => {
-                    return res.json();
-                })
-                .then((data) => {
-                    dispatch(setTodoList(data));
-                    // setIsPending(false);
-                });
-            onModifyCancelHandler();
-        });
-    }
+        })
+        .then(() => {
+            onEditMode();
+            setModifiedTitle(modifiedTitle);
+            setModifiedContent(modifiedContent);
+        })
+    };
+
+    const handleAddEnter = (e) => {};
 
     return (
         <List>
@@ -198,18 +176,33 @@ const Todo = ({ todo }) => {
                     ></i>
                 </IconContainer>
             </TitleContainer>
-            <InputTitle ref={inputEl} value={modifiedTitle} onChange={onChangeModifyTitle}></InputTitle>
+            <InputTitle
+                ref={inputEl}
+                value={modifiedTitle}
+                onChange={onChangeModifyTitle}
+            ></InputTitle>
             {/* :<div></div> */}
             {/* } */}
             <hr />
             <ContentContainer ref={contentEl}>{todo.content}</ContentContainer>
-            <TextareaContent ref={textareaEl} onChange={onChangeModifyContent} value={modifiedContent}></TextareaContent>
-            {isModifyClicked ? 
+            <TextareaContent
+                rows={5}
+                ref={textareaEl}
+                onChange={onChangeModifyContent}
+                value={modifiedContent}
+            ></TextareaContent>
+            {isModifyClicked ? (
                 <ModifyButtonContainer>
                     <button onClick={onModifyCancelHandler}>취소</button>
-                    <button onClick={() => {onModifyConfirmHandler(todo.id)}}>확인</button>
+                    <button
+                        onClick={() => {
+                            onModifyConfirmHandler(todo.id);
+                        }}
+                    >
+                        확인
+                    </button>
                 </ModifyButtonContainer>
-            : null}
+            ) : null}
         </List>
     );
 };

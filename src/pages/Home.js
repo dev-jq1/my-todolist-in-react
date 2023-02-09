@@ -3,8 +3,11 @@ import Topbar from "../Topbar";
 import Calendar from "../components/Calendar";
 import Modal from "../components/Modal";
 import Todos from "../components/Todos";
+import { useDispatch, useSelector } from "react-redux";
+import { setIsPending } from "../store/store";
+import { useEffect } from "react";
 
-function Home({isPending}) {
+function Home() {
     return (
         <>
             <Topbar />
@@ -15,7 +18,8 @@ function Home({isPending}) {
                 <div className="content-main">
                     <Calendar></Calendar>
                     <Modal />
-                    {isPending || <Todos />}
+                    <Todos/>
+                    {/* {isPending || <Todos />} */}
                 </div>
             </div>
         </>

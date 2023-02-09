@@ -12,6 +12,7 @@ import { isSameMonth, isSameDay, addDays, parse } from "date-fns";
 import "./Calendar.css";
 import { useDispatch, useSelector } from "react-redux";
 import { setSelectedDay } from "../store/store";
+import { setTodoList } from "../store/store";
 import styled from "styled-components";
 // import { Link, useNavigate } from "react-router-dom";
 
@@ -73,11 +74,8 @@ const RenderHeader = ({
                     weeks[getWeekOfMonth(currentDate)]
                 } 주`}</span>
             </div>
-            {/* <Link to="/"><TodayBtn>오늘</TodayBtn></Link> */}
             <TodayBtn
                 onClick={() => {
-                    // console.log("눌림")
-                    // window.location.reload();
                     dispatch(setSelectedDay(new Date()));
                     setCurrentDate(new Date());
                 }}
@@ -156,9 +154,8 @@ const RenderCells = ({ currentDate, selectedDate, onDateClick }) => {
 
 const Calendar = () => {
     const [currentDate, setCurrentDate] = useState(new Date());
-    // const [selectedDate, setSelectedDate] = useState(new Date());
-
     const selectedDay = useSelector((state) => state.selectedDay);
+    
     const dispatch = useDispatch();
 
     const prevWeek = () => {
@@ -170,6 +167,7 @@ const Calendar = () => {
     const onDateClick = (day) => {
         dispatch(setSelectedDay(day));
     };
+
     return (
         <div className="calendar">
             <RenderHeader

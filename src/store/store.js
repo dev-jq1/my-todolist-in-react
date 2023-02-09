@@ -22,13 +22,25 @@ const todoList = createSlice({
     }
 })
 
+const isPending = createSlice({
+    name: "isPending",
+    initialState: true,
+    reducers: {
+        setIsPending(state, data) {
+            return data.payload;
+        }
+    }
+})
+
 export const { setSelectedDay } = selectedDay.actions;
 export const { setTodoList } = todoList.actions;
+export const { setIsPending } = isPending.actions;
 
 export default configureStore({
     reducer: {
         selectedDay: selectedDay.reducer,
-        todoList: todoList.reducer
+        todoList: todoList.reducer,
+        isPending: isPending.reducer
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware({
         serializableCheck: false,

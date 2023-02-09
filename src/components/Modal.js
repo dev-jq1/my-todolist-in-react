@@ -1,7 +1,9 @@
+import axios from "axios";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
-import { setTodoList } from "../store/store";
+import { setIsPending, setTodoList } from "../store/store";
+import { usePostFetch } from "../util/useFetch";
 
 export const ModalContainer = styled.div`
     // TODO : Modal을 구현하는데 전체적으로 필요한 CSS를 구현합니다.
@@ -43,7 +45,7 @@ export const ModalView = styled.div`
     display: flex;
     flex-direction: column;
     background-color: white;
-    width: 40%;
+    width: 300px;
     height: auto;
     border-radius: 20px;
     justify-content: space-between;
@@ -87,7 +89,7 @@ export const ModalView = styled.div`
             font-size: 20px;
             font-weight: bold;
             height: 66px;
-            width: 49.9%;
+            width: 149px;
             /* margin-top: 20px; */
             &.btn-cancel {
                 border-bottom-left-radius: 20px;
@@ -108,7 +110,6 @@ const Modal = () => {
 
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
-    const [todoData, setTodoData] = useState("");
 
     const selectedDay = useSelector((state) => state.selectedDay);
     const formatDate = `${selectedDay.getFullYear()}-${
@@ -116,22 +117,8 @@ const Modal = () => {
     }-${selectedDay.getDate()}`;
 
     const todoList = useSelector((state) => state.todoList);
-
+    console.log("렌더링")
     const dispatch = useDispatch();
-
-    useEffect(() => {
-        fetch(`http://localhost:3001/todolist`, {
-            method: "GET",
-        })
-            .then((res) => {
-                return res.json();
-            })
-            .then((data) => {
-                setTodoData(data);
-                dispatch(setTodoList(data));
-                setIsAdded(false);
-            });
-    }, [selectedDay, isAdded]);
 
     const openModalHandler = () => {
         // TODO : isOpen의 상태를 변경하는 메소드를 구현합니다.
@@ -150,33 +137,26 @@ const Modal = () => {
 
     const onConfirmHandler = () => {
         if (title === "" || content === "") return;
-        // console.log(todoData);
         const newDay = formatDate;
-        // console.log(todoData[newDay][todoData[newDay].length-1].id)
         const newData = {
-            // id: 1,
-            id: todoData[todoData.length - 1].id + 1,
+            id: todoList[todoList.length - 1].id + 1,
             date: newDay,
             title: title,
             content: content,
         };
-        // dispatch(addDate(newDay));
-        // dispatch(addTodoList(newData));
 
-        // console.log(todoList)
-        fetch(`http://localhost:3001/todolist`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(newData),
-        }).then(() => {
+        axios.post(`http://localhost:3001/todolist`, newData)
+        .then(() => {
             setIsOpen(!isOpen);
-            setIsAdded(true);
-            // navigate("/");
-
-            // window.location.reload();
-        });
+            setIsAdded(true); 
+        })
+        .then(() => {
+            axios.get(`http://localhost:3001/todolist`)
+            .then(res => {
+                dispatch(setTodoList(res.data));
+                dispatch(setIsPending(false));
+            });
+        })
     };
 
     return (
